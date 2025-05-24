@@ -16,7 +16,7 @@ Let's solve this step by step:
 
 <tool>
 {
-  "name": "calculator", 
+  "name": "calculator",
   "args": {
     "expression": "3 * 12"
   }
@@ -36,7 +36,7 @@ Let's solve this step by step:
 
 <tool>
 {
-  "name": "calculator", 
+  "name": "calculator",
   "args": {
     "expression": "36 + 12"
   }
@@ -70,7 +70,7 @@ To find how many complete batches Samantha can make, I need to divide the total 
 
 <tool>
 {
-  "name": "calculator", 
+  "name": "calculator",
   "args": {
     "expression": "10 / 2.5"
   }
@@ -95,11 +95,11 @@ So Samantha can make 4 complete batches of cookies with her 10 cups of flour.
 
 SEARCH_SMOLA_FEW_SHOTS = [
     {
-        'role': 'user', 
+        'role': 'user',
         'content': 'Question: Which of the following is an example of mechanical weathering?\\n\\nChoices:\\nA. A rock turns red when iron minerals are exposed to oxygen.\\nB. A rock breaks apart after water freezes and expands in a crack.\\nC. A rock dissolves as acidic rainwater flows over its surface.\\nD. A rock changes composition when exposed to extreme heat.'
     },
     {
-        'role': 'assistant', 
+        'role': 'assistant',
         'content': """<reasoning>
 I need to understand what mechanical weathering is and which of these options matches that phenomenon. Let me search for information about mechanical weathering.
 </reasoning>

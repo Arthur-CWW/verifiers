@@ -70,9 +70,9 @@ class GRPOEnvTrainer(GRPOTrainer):
         self.vllm_client = None
         if not args.use_vllm: # type: ignore
             raise ValueError("vLLM must be enabled for GRPOEnvTrainer")
-        if not (callable(reward_funcs) or (isinstance(reward_funcs, list) and all(callable(f) for f in reward_funcs))): 
+        if not (callable(reward_funcs) or (isinstance(reward_funcs, list) and all(callable(f) for f in reward_funcs))):
             raise ValueError("reward_funcs must be a function or a list of functions. Use vLLM to host neural reward models.")
-        
+
         super().__init__(
             model=model,
             reward_funcs=reward_funcs,
@@ -97,7 +97,7 @@ class GRPOEnvTrainer(GRPOTrainer):
         )
 
     def _generate_and_score_completions(
-         self, inputs: dict[str, Union[torch.Tensor, Any]]   
+         self, inputs: dict[str, Union[torch.Tensor, Any]]
     ) -> dict[str, Union[torch.Tensor, Any]]:
         device = self.accelerator.device
         prompts = [x["prompt"] for x in inputs] # type: ignore
@@ -155,7 +155,7 @@ class GRPOEnvTrainer(GRPOTrainer):
 
         prompt_completion_ids = torch.cat([prompt_ids, completion_ids], dim=1)
         attention_mask = torch.cat([prompt_mask, completion_mask], dim=1) # (B, P+C)
-        
+
         logits_to_keep = completion_ids.size(1)
 
         with torch.no_grad():
@@ -188,7 +188,7 @@ class GRPOEnvTrainer(GRPOTrainer):
             keys = [key for key in inputs[0] if key not in ["prompt", "completion"]] # type: ignore
             reward_kwargs = {key: [example[key] for example in inputs] for key in keys} # type: ignore
             output_reward_func = reward_func(prompts=prompts, completions=completions, **reward_kwargs) # type: ignore
-            
+
             output_reward_func = [reward if reward is not None else torch.nan for reward in output_reward_func]
             rewards_per_func[:, i] = torch.tensor(output_reward_func, dtype=torch.float32, device=device)
 
@@ -215,7 +215,7 @@ class GRPOEnvTrainer(GRPOTrainer):
         # Normalize the rewards to compute the advantages
         mean_grouped_rewards = mean_grouped_rewards.repeat_interleave(self.num_generations, dim=0) # type: ignore
         advantages = (rewards - mean_grouped_rewards)
-        
+
         std_grouped_rewards = rewards.view(-1, self.num_generations).std(dim=1) # type: ignore
         std_grouped_rewards = std_grouped_rewards.repeat_interleave(self.num_generations, dim=0) # type: ignore
         if self.scale_rewards:
@@ -237,7 +237,7 @@ class GRPOEnvTrainer(GRPOTrainer):
 
         # Calculate mean reward per function, but only for samples where the function was applied
         for i, reward_func in enumerate(self.reward_funcs):
-            reward_func_name = reward_func.__name__ # type: ignore  
+            reward_func_name = reward_func.__name__ # type: ignore
             # Only calculate mean for samples where this reward function was applied (non-NaN values)
             mean_rewards = torch.nanmean(rewards_per_func[:, i]).item()
             self._metrics[mode][f"rewards/{reward_func_name}"].append(mean_rewards)

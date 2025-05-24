@@ -336,7 +336,7 @@ def main(script_args: ScriptArguments):
         connections.append(parent_connection)
         processes.append(process)
 
-    @asynccontextmanager 
+    @asynccontextmanager
     async def lifespan(app: FastAPI):
         # Wait for all workers to send "ready"
         ready_connections = set()
@@ -356,8 +356,8 @@ def main(script_args: ScriptArguments):
                 process.terminate()
                 process.join()  # ensure process termination after calling terminate()
 
-    app = FastAPI(lifespan=lifespan) 
- 
+    app = FastAPI(lifespan=lifespan)
+
     # Define the endpoints for the model server
     @app.get("/health/")
     async def health():
@@ -394,7 +394,7 @@ def main(script_args: ScriptArguments):
         guided_decoding_regex: Optional[str] = None
 
     class GenerateResponse(BaseModel):
-        completion_ids: list[list[int]]        
+        completion_ids: list[list[int]]
 
     @app.post("/generate/", response_model=GenerateResponse)
     async def generate(request: GenerateRequest):
@@ -546,7 +546,7 @@ def main(script_args: ScriptArguments):
                 messages = [{"role": "user", "content": "<placeholder>"}]
 
             kwargs = {"messages": messages, "sampling_params": sampling_params}
-            connection.send({"type": "call", "method": "chat", "kwargs": kwargs})   
+            connection.send({"type": "call", "method": "chat", "kwargs": kwargs})
 
         # Receive results
         all_outputs = [connection.recv() for connection in connections]
@@ -554,7 +554,7 @@ def main(script_args: ScriptArguments):
         # Handle empty prompts (see above)
         all_outputs = [output for output, messages in zip(all_outputs, chunked_messages) if messages]
 
-        # Flatten and combine all results   
+        # Flatten and combine all results
         all_outputs = list(chain.from_iterable(all_outputs))  # from list of list to single list
         responses = []
         for outputs in all_outputs:
