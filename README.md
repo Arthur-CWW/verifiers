@@ -13,6 +13,7 @@ PyPI [coming soon](https://pypi.org/project/verifiers/), for now just do:
 ```bash
 git clone https://github.com/willccbb/verifiers.git
 cd verifiers
+uv venv --python 3.11
 uv sync
 uv pip install flash-attn --no-build-isolation
 source .venv/bin/activate
