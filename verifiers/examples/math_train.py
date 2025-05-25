@@ -13,7 +13,12 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python verifiers/inference/vllm_serve.py --model 'Q
     --gpu_memory_utilization 0.9 --enable_prefix_caching True \
     --host 0.0.0.0 --port 8000
 
-CUDA_VISIBLE_DEVICES=4,5,6,7 accelerate launch --config-file configs/zero3.yaml verifiers/examples/math_train.py
+CUDA_VISIBLE_DEVICES=0,1,2,3 python verifiers/inference/vllm_serve.py --model 'Qwen/Qwen2.5-7B-Instruct' \
+    --tensor_parallel_size 4 --max_model_len 8192 --dtype bfloat16 \
+    --gpu_memory_utilization 0.9 --enable_prefix_caching True \
+    --host 0.0.0.0 --port 8000
+
+CUDA_VISIBLE_DEVICES=1,2 accelerate launch --config-file configs/zero3.yaml verifiers/examples/math_train.py
 """
 
 TOOL_PROMPT = """
@@ -113,4 +118,4 @@ trainer = vf.GRPOEnvTrainer(
     train_dataset=vf_env.get_dataset(),
     eval_dataset=vf_env.get_eval_dataset()
 )
-trainer.train() 
+trainer.train()

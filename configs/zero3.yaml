@@ -7,6 +7,13 @@ deepspeed_config:
   zero3_init_flag: true
   zero3_save_16bit_model: true
   zero_stage: 3
+  # activation_checkpointing:
+  #   partition_activations: true  # ZeRO-R: partitions activations across GPUs
+  #   cpu_checkpointing: false     # Offload checkpointed activations to CPU (use if GPU memory is extremely tight)
+  #   contiguous_memory_optimization: false # May improve performance but uses more memory
+  #   synchronize_checkpoint_boundary: false
+  #   profile: false # Set to true to get detailed profiling of checkpointing
+
 distributed_type: DEEPSPEED
 downcast_bf16: 'no'
 machine_rank: 0
