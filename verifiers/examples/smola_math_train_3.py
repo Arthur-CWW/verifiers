@@ -12,12 +12,16 @@ from verifiers.tools.smolagents import CalculatorTool
 """
 Multi-GPU training (single node, 4 training + 4 inference) using SmolaAgents tools
 
-CUDA_VISIBLE_DEVICES=0,1 python verifiers/inference/vllm_serve.py --model 'tiiuae/Falcon-H1-1.5B-Deep-Base' \
+uv run -m verifiers.inference.vllm_serve --model 'Qwen/Qwen3-1.7B' \
+    --max_model_len 8192 --dtype bfloat16 \
+    --gpu_memory_utilization 0.9 --enable_prefix_caching True \
+    --host 0.0.0.0 --port 8000
+CUDA_VISIBLE_DEVICES=0,1 uv run -m verifiers.inference.vllm_serve --model 'Qwen/Qwen3-1.7B' \
     --data_parallel_size 2 --max_model_len 8192 --dtype bfloat16 \
     --gpu_memory_utilization 0.9 --enable_prefix_caching True \
     --host 0.0.0.0 --port 8000
 
-CUDA_VISIBLE_DEVICES=2 accelerate launch --config-file configs/zero3.yaml verifiers/examples/smola_math_train_3.py
+CUDA_VISIBLE_DEVICES=1 accelerate launch --config-file configs/zero3.yaml verifiers/examples/smola_math_train_3.py
 """
 
 dataset = preprocess_dataset("math", "train", n=6000)
@@ -44,7 +48,7 @@ vf_env = SmolaToolEnv(
 print(vf_env.system_prompt)
 
 # model_name = "Qwen/Qwen2.5-7B-Instruct"
-model_name = "tiiuae/Falcon-H1-1.5B-Deep-Base"
+model_name = "Qwen/Qwen3-1.7B"
 model, tokenizer = vf.get_model_and_tokenizer(model_name)
 run_name = "math-smola-grpo_" + model_name.split("/")[-1].lower()
 
