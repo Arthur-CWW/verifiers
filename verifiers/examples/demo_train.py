@@ -9,7 +9,7 @@ model_name = "Qwen/Qwen2.5-1.5B-Instruct"
 """
 2-GPU training (single node, 1 training + 1 inference)
 
-CUDA_VISIBLE_DEVICES=0 python verifiers/inference/vllm_serve.py --model 'Qwen/Qwen2.5-1.5B-Instruct' --max_model_len 4096 --dtype bfloat16 --gpu_memory_utilization 0.95 --enable_prefix_caching True
+CUDA_VISIBLE_DEVICES=0 uv run -m verifiers.inference.vllm_serve --model 'Qwen/Qwen2.5-1.5B-Instruct' --max_model_len 4096 --dtype bfloat16 --gpu_memory_utilization 0.95 --enable_prefix_caching True
 CUDA_VISIBLE_DEVICES=1 accelerate launch --num-processes 1 --config-file configs/zero3.yaml verifiers/examples/demo_train.py
 ---
 4-GPU training (single node, 2 training + 2 inference)
@@ -48,9 +48,9 @@ training_args=GRPOConfig(
     num_iterations=1,
     beta=0,
     max_prompt_length=512,
-    max_completion_length=1536,
-    per_device_train_batch_size=16,
-    num_generations=4,
+    max_completion_length=1024,
+    per_device_train_batch_size=1,
+    num_generations=2,
     gradient_accumulation_steps=1,
     gradient_checkpointing=True,
     save_strategy="steps",
